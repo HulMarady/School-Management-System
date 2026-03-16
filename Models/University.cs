@@ -1,8 +1,19 @@
-﻿namespace School_Management_System.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace School_Management_System.Models;
 
 public class University
 {
     public int Id { get; set; }
+
+    [Required(ErrorMessage = "{0} is required")]
+    [Display(Name = "University Name")]
+    [StringLength(100, MinimumLength = 6, ErrorMessage = "{0} must be between {2} and {1} characters")]
     public string Name { get; set; }
-    public string Location { get; set; }
+
+    [Required(ErrorMessage = "{0} is required")]
+    [EmailAddress]
+    [StringLength(100, MinimumLength = 6, ErrorMessage = "{0} must be between {2} and {1} characters")]
+    public string Email { get; set; }
+    public string? Location { get; set; }
 }
