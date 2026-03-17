@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
 
 namespace School_Management_System.Models;
 
@@ -12,4 +11,7 @@ public class Department
     public string Name { get; set; }
     public int UniversityId { get; set; }
     public University University { get; set; }
+
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime UpdatedAt { get; set; } = DateTime.Now;
 }
