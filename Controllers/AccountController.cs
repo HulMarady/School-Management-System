@@ -1,4 +1,8 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using School_Management_System.Data;
 using School_Management_System.Models;
 
@@ -49,6 +53,52 @@ namespace School_Management_System.Controllers
         public async Task<IActionResult> Login()
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(string email, string password)
+        {
+            if(string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+            {
+                ModelState.AddModelError(string.Empty, "Email and password are required.");
+                return View();
+            }
+
+            var user =  _applicationDbContext.Users.FirstOrDefault(user => user.Email == email);
+            if(user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
+            {
+                ModelState.AddModelError(string.Empty, "Invalid email or password");
+                return View();
+            }
+
+            // Create claims and sign in the user
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role)
+            };
+
+            // Create the identity and principal
+            var identity = new ClaimsIdentity(
+                claims,
+                CookieAuthenticationDefaults.AuthenticationScheme
+            );
+
+            // Sign in the user
+            var authProperties = new AuthenticationProperties()
+            {
+                IsPersistent = true, // Keep the user logged in across sessions
+                ExpiresUtc = DateTimeOffset.UtcNow.AddHours(1) // Set the expiration time for the cookie
+            };
+
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                new ClaimsPrincipal(identity),
+                authProperties
+            );
+
+            return RedirectToAction("Index", "Dashboard");
         }
     }
 }
