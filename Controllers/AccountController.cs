@@ -100,5 +100,11 @@ namespace School_Management_System.Controllers
 
             return RedirectToAction("Index", "Dashboard");
         }
+        
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction(nameof(Login));
+        }
     }
 }
