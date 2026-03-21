@@ -25,6 +25,13 @@ namespace School_Management_System.Controllers
         public async Task<IActionResult> Register(User user)
         {
             // Validate the incoming user data
+            if(!ModelState.IsValid)
+            {
+                foreach(var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine(error.ErrorMessage);
+                }
+            }
             if(ModelState.IsValid)
             {
                 if(_applicationDbContext.Users.Any(user =>user.Email == user.Email))
@@ -76,7 +83,6 @@ namespace School_Management_System.Controllers
             {
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role)
             };
 
             // Create the identity and principal
