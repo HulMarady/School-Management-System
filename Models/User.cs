@@ -13,7 +13,7 @@ public class User
 
     [Required]
     public string Password { get; set; }
-    public string Role { get; set; } // e.g., "Admin", "Student", "Teacher"
+    public string? Role { get; set; } // e.g., "Admin", "Student", "Teacher"
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
 }
