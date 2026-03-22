@@ -41,13 +41,17 @@ function hideError(elementId) {
 }
 
 // Validation functions
-function validateUsername() {
-    const username = document.getElementById('Username').value.trim();
-    if (username.length === 0) {
-        showError('usernameError', 'Username or email is required');
+function validateEmail() {
+    const email = document.getElementById('Email').value.trim();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (email.length === 0) {
+        showError('emailError', 'Email is required');
+        return false;
+    } else if (!emailRegex.test(email)) {
+        showError('emailError', 'Please enter a valid email address');
         return false;
     }
-    hideError('usernameError');
+    hideError('emailError');
     return true;
 }
 
@@ -63,12 +67,12 @@ function validatePassword() {
 
 // Real-time validation event listeners
 document.addEventListener('DOMContentLoaded', function() {
-    const usernameInput = document.getElementById('Username');
+    const emailInput = document.getElementById('Email');
     const passwordInput = document.getElementById('Password');
     const form = document.getElementById('loginForm');
     
-    if (usernameInput) {
-        usernameInput.addEventListener('input', validateUsername);
+    if (emailInput) {
+        emailInput.addEventListener('input', validateEmail);
     }
     
     if (passwordInput) {
@@ -78,10 +82,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Form submit validation
     if (form) {
         form.addEventListener('submit', function(e) {
-            const isUsernameValid = validateUsername();
+            const isEmailValid = validateEmail();
             const isPasswordValid = validatePassword();
             
-            if (!isUsernameValid || !isPasswordValid) {
+            if (!isEmailValid || !isPasswordValid) {
                 e.preventDefault();
                 
                 // Scroll to first error
