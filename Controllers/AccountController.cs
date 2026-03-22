@@ -65,6 +65,14 @@ namespace School_Management_System.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(string email, string password)
         {
+            if(!ModelState.IsValid)
+            {
+                foreach(var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine(error.ErrorMessage);
+                }
+            }
+
             if(string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
             {
                 ModelState.AddModelError(string.Empty, "Email and password are required.");
