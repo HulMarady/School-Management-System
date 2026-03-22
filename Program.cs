@@ -47,6 +47,21 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+
+// Custom route for Login
+app.MapControllerRoute(
+    name: "Login",
+    pattern: "Login",
+    defaults: new { controller = "Account", action = "Login" }
+);
+
+
+app.MapControllerRoute(
+    name: "Register", 
+    pattern: "Register",
+    defaults: new { controller = "Account", action = "Register" }
+);
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}"
