@@ -82,6 +82,30 @@ namespace School_Management_System.Controllers
             
             return View(user);
         }
+        
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, User user)
+        {
+            if(id != user.Id)
+                return NotFound();
+            
+            if(ModelState.IsValid)
+            {
+                var existingUser = _applicationDbContext.Users
+                                        .FirstOrDefault(user => user.Id == id);
+                if(existingUser == null)
+                    return NotFound();
 
+                existingUser.Username = user.Username;
+                existingUser.Email = user.Email;
+                existingUser.Role = user.Role;
+
+                _applicationDbContext.Users.Update(existingUser);
+                await _applicationDbContext.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(user);
+        }
     }
 }
