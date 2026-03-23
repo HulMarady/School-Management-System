@@ -107,5 +107,18 @@ namespace School_Management_System.Controllers
 
             return View(user);
         }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            if(id <= 0)
+                return NotFound();
+            
+            var user = _applicationDbContext.Users
+                            .FirstOrDefault(user => user.Id == id);
+            if(user == null)
+                return NotFound();
+
+            return View(user);
+        }
     }
 }
