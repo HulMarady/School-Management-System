@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using School_Management_System.Data;
-using API.PagedList;
 using Microsoft.EntityFrameworkCore;
+using School_Management_System.Data;
 using School_Management_System.Models;
+using X.PagedList.Extensions;
 
 namespace School_Management_System.Controllers
 {
@@ -28,9 +28,8 @@ namespace School_Management_System.Controllers
                 );
             }
 
-            var users = await query
-                            .OrderBy(user => user.Username)
-                            .ToPagedListAsync(page, pageSize);
+            var users = query .OrderBy(user => user.Username)
+                            .ToPagedList(page, pageSize);
 
             return View(users);
         }
@@ -41,12 +40,26 @@ namespace School_Management_System.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(User user)
+        public async Task<IActionResult> Create(User user, string ConfirmPassword)
         {
             if(ModelState.IsValid)
             {
+                if(await _applicationDbContext.Users.AnyAsync(u => u.Email == user.Email))
+                {
+                    ModelState.AddModelError("Email", "Email already exists.");
+                    return View(user);
+                }
+
+                if(user.Password != ConfirmPassword)
+                {
+                    ModelState.AddModelError("ConfirmPassword", "Passwords do not match");
+                    return View(user);
+                }
+
                 user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
                 user.Role = user.Role ?? "User";
+                user.CreatedAt = DateTime.UtcNow;
+                user.UpdatedAt = DateTime.UtcNow;
 
                 _applicationDbContext.Users.Add(user);
                 await _applicationDbContext.SaveChangesAsync();
@@ -119,6 +132,23 @@ namespace School_Management_System.Controllers
                 return NotFound();
 
             return View(user);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            if(id <= 0)
+                return NotFound();
+
+            var user = _applicationDbContext.Users
+                            .FirstOrDefault(user => user.Id == id);
+
+            if(user == null)
+                return NotFound();
+
+            _applicationDbContext.Users.Remove(user);
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
     }
 }
