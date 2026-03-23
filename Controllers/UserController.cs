@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using School_Management_System.Data;
 using API.PagedList;
 using Microsoft.EntityFrameworkCore;
+using School_Management_System.Models;
 
 namespace School_Management_System.Controllers
 {
@@ -32,6 +33,27 @@ namespace School_Management_System.Controllers
                             .ToPagedListAsync(page, pageSize);
 
             return View(users);
+        }
+
+        public async Task<IActionResult> Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(User user)
+        {
+            if(ModelState.IsValid)
+            {
+                user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+                user.Role = user.Role ?? "User";
+
+                _applicationDbContext.Users.Add(user);
+                await _applicationDbContext.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(user);
         }
     }
 }
