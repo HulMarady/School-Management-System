@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // Add services to the container.
-builder.Services.AddRazorPages();
+// builder.Services.AddRazorPages();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
@@ -22,9 +22,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Login";
-        options.LogoutPath = "/Logout";
-        options.AccessDeniedPath = "/AccessDenied";
+        options.LoginPath = "/login";
+        options.LogoutPath = "/logout";
+        options.AccessDeniedPath = "/access-denied";
     });
 
 builder.Services.AddAuthorization();
@@ -50,23 +50,23 @@ app.MapStaticAssets();
 
 // Custom route for Login
 app.MapControllerRoute(
-    name: "Login",
-    pattern: "Login",
+    name: "login",
+    pattern: "login",
     defaults: new { controller = "Account", action = "Login" }
 );
 
 
 app.MapControllerRoute(
-    name: "Register", 
-    pattern: "Register",
+    name: "register", 
+    pattern: "register",
     defaults: new { controller = "Account", action = "Register" }
 );
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}"
+    pattern: "{controller=Account}/{action=Login}/{id?}"
 );
-app.MapRazorPages()
-   .WithStaticAssets();
+// app.MapRazorPages()
+//    .WithStaticAssets();
 
 app.Run();
