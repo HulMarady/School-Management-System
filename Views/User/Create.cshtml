@@ -1,0 +1,215 @@
+@model School_Management_System.Models.User
+@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewBag.Title = "Create User";
+    ViewBag.ActiveMenu = "Users";
+}
+
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-3">
+                <a href="@Url.Action("Index", "User")" class="text-indigo-600 hover:text-indigo-800 transition-colors">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-800">Create New User</h2>
+                    <p class="text-gray-500 mt-1">Add a new user to the system. Fill in the required information below.</p>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="@Url.Action("Index", "User")" class="border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2">
+                <i class="fas fa-times"></i>
+                <span>Cancel</span>
+            </a>
+            <button type="submit" form="createUserForm" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2 shadow-sm">
+                <i class="fas fa-save"></i>
+                <span>Create User</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Create Form -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <form id="createUserForm" asp-action="Create" asp-controller="User" method="post" class="space-y-6">
+            @Html.AntiForgeryToken()
+            
+            <div class="p-6 space-y-6">
+                <!-- Validation Summary -->
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <div class="flex items-center gap-2 text-red-700 mb-2">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span class="font-medium">Please correct the following errors:</span>
+                        </div>
+                        <div asp-validation-summary="All" class="text-sm text-red-600 space-y-1"></div>
+                    </div>
+                }
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Left Column -->
+                    <div class="space-y-6">
+                        <!-- Username Field -->
+                        <div>
+                            <label asp-for="Username" class="block text-sm font-medium text-gray-700 mb-2">
+                                Username <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-user text-gray-400"></i>
+                                </div>
+                                <input asp-for="Username" 
+                                       type="text" 
+                                       class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all @(ViewData.ModelState.ContainsKey("Username") && ViewData.ModelState["Username"].Errors.Any() ? "border-red-500" : "")"
+                                       placeholder="Enter username" />
+                            </div>
+                            <span asp-validation-for="Username" class="text-sm text-red-600 mt-1 block"></span>
+                            <p class="text-xs text-gray-500 mt-1">Username must be unique and can contain letters, numbers, and underscores (3-50 characters).</p>
+                        </div>
+
+                        <!-- Email Field -->
+                        <div>
+                            <label asp-for="Email" class="block text-sm font-medium text-gray-700 mb-2">
+                                Email Address <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-envelope text-gray-400"></i>
+                                </div>
+                                <input asp-for="Email" 
+                                       type="email" 
+                                       class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all @(ViewData.ModelState.ContainsKey("Email") && ViewData.ModelState["Email"].Errors.Any() ? "border-red-500" : "")"
+                                       placeholder="user@example.com" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-sm text-red-600 mt-1 block"></span>
+                            <p class="text-xs text-gray-500 mt-1">A valid email address is required for notifications and password recovery.</p>
+                        </div>
+
+                        <!-- Role Field -->
+                        <div>
+                            <label asp-for="Role" class="block text-sm font-medium text-gray-700 mb-2">
+                                Role <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-tag text-gray-400"></i>
+                                </div>
+                                <select asp-for="Role" 
+                                        id="Role"
+                                        class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all appearance-none bg-white">
+                                    <option value="">Select a role</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Teacher">Teacher</option>
+                                    <option value="Student">Student</option>
+                                </select>
+                                <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-chevron-down text-gray-400"></i>
+                                </div>
+                            </div>
+                            <span asp-validation-for="Role" class="text-sm text-red-600 mt-1 block"></span>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="space-y-6">
+                        <!-- Password Field -->
+                        <div>
+                            <label asp-for="Password" class="block text-sm font-medium text-gray-700 mb-2">
+                                Password <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-lock text-gray-400"></i>
+                                </div>
+                                <input asp-for="Password" 
+                                       type="password" 
+                                       id="Password"
+                                       class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all @(ViewData.ModelState.ContainsKey("Password") && ViewData.ModelState["Password"].Errors.Any() ? "border-red-500" : "")"
+                                       placeholder="Enter password" />
+                            </div>
+                            <span asp-validation-for="Password" class="text-sm text-red-600 mt-1 block"></span>
+                            <!-- Password requirements will be added by JavaScript -->
+                        </div>
+
+                        <!-- Confirm Password Field -->
+                        <div>
+                            <label for="ConfirmPassword" class="block text-sm font-medium text-gray-700 mb-2">
+                                Confirm Password <span class="text-red-500">*</span>
+                            </label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-check-circle text-gray-400"></i>
+                                </div>
+                                <input type="password" 
+                                       name="ConfirmPassword" 
+                                       id="ConfirmPassword"
+                                       class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all"
+                                       placeholder="Confirm password" />
+                            </div>
+                            <span id="confirmPasswordError" class="text-sm text-red-600 mt-1 block hidden"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Role Descriptions -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+                    <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                        <div class="flex items-center gap-2 mb-1">
+                            <i class="fas fa-user-shield text-purple-600"></i>
+                            <span class="font-medium text-sm text-gray-700">Admin</span>
+                        </div>
+                        <p class="text-xs text-gray-500">Full system access, can manage users and settings</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                        <div class="flex items-center gap-2 mb-1">
+                            <i class="fas fa-chalkboard-user text-blue-600"></i>
+                            <span class="font-medium text-sm text-gray-700">Teacher</span>
+                        </div>
+                        <p class="text-xs text-gray-500">Can manage courses, assignments, and grades</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                        <div class="flex items-center gap-2 mb-1">
+                            <i class="fas fa-graduation-cap text-green-600"></i>
+                            <span class="font-medium text-sm text-gray-700">Student</span>
+                        </div>
+                        <p class="text-xs text-gray-500">Can view courses, submit assignments, and track progress</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Actions - Moved to bottom like User Management -->
+            <div class="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-end gap-3">
+                <a href="@Url.Action("Index", "User")" 
+                   class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200">
+                    Cancel
+                </a>
+                <button type="submit" 
+                        class="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors duration-200 flex items-center gap-2 shadow-sm">
+                    <i class="fas fa-save"></i>
+                    <span>Create User</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Additional Information -->
+    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex items-start gap-3">
+            <i class="fas fa-info-circle text-blue-600 mt-0.5"></i>
+            <div>
+                <h4 class="text-sm font-medium text-blue-800 mb-1">Important Information</h4>
+                <p class="text-xs text-blue-700">
+                    After creating a user, they will receive a welcome email with login instructions. 
+                    Users can change their password after their first login. Make sure to provide a valid email address.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/user/create-user.js"></script>
+}
