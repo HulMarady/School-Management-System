@@ -9,9 +9,6 @@
 <div class="space-y-6">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div class="flex items-center gap-3">
-            <a href="@Url.Action("Index", "User")" class="text-indigo-600 hover:text-indigo-800 transition-colors">
-                <i class="fas fa-arrow-left"></i>
-            </a>
             <div>
                 <h2 class="text-2xl font-bold text-gray-800">Edit User</h2>
                 <p class="text-gray-500 mt-1">Update profile information for this account.</p>
@@ -29,13 +26,13 @@
         </div>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div class="bg-white shadow-sm border-gray-100 overflow-hidden">
         <form id="editUserForm" asp-action="Edit" asp-controller="User" method="post">
             @Html.AntiForgeryToken()
             <input asp-for="Id" type="hidden" />
             <input asp-for="Password" type="hidden" />
 
-            <div class="p-6 space-y-6">
+            <div class=" space-y-6">
                 <div asp-validation-summary="ModelOnly" class="text-sm text-red-600"></div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
