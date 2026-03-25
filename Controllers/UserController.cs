@@ -28,7 +28,7 @@ namespace School_Management_System.Controllers
                 );
             }
 
-            var users = query .OrderBy(user => user.Username)
+            var users = query.OrderBy(user => user.CreatedAt)
                             .ToPagedList(page, pageSize);
 
             return View(users);
