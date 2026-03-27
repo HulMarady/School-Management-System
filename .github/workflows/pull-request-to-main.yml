@@ -1,0 +1,30 @@
+name: Create Pull Request from Develop to Main
+
+on:
+    push: 
+        branches: 
+            - develop
+
+jobs:
+    create-pull-request:
+        runs-on: ubuntu-latest
+        steps:
+            # Checkout the repository to access the code and create a pull request
+            - name: Checkout Repository
+              uses: actions/checkout@v5
+
+            
+            # Create a pull request from develop to main
+            - name: Create Pull Request
+              uses: peter-evans/create-pull-request@v5
+              with:
+                token: ${{ secrets.GITHUB_TOKEN}}
+                base: main
+                head: develop
+                title: "Merge Develop branch into Main branch - Automated Pull Request"  
+                body: "This pull request was automatically created by a GitHub Action to merge the latest changes from the develop branch into the main branch. Please review the changes and merge if everything looks good."
+                draft: false
+                labels: "automated, merge, develop-to-main"
+                     
+  
+  
