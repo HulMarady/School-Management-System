@@ -8,12 +8,12 @@ public class User
 
     [Required]
     [Display(Name = "First Name")]
-    [StringLength(50, MinimumLength = 6)]
+    [StringLength(50, MinimumLength = 2)]
     [RegularExpression("^[a-zA-Z ]+$")]
     public string FirstName { get; set; }
     [Required]
     [Display(Name = "Last Name")]
-    [StringLength(50, MinimumLength = 6)]
+    [StringLength(50, MinimumLength = 2)]
     [RegularExpression("^[a-zA-Z ]+$")]
     public string LastName { get; set; }
 
