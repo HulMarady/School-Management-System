@@ -1,30 +1,27 @@
-name: Create Pull Request from Develop to Main
+name: Create PR from Develop to Main
 
 on:
-    push: 
-        branches: 
-            - develop
+  push:
+    branches:
+      - develop
 
 jobs:
-    create-pull-request:
-        runs-on: ubuntu-latest
-        steps:
-            # Checkout the repository to access the code and create a pull request
-            - name: Checkout Repository
-              uses: actions/checkout@v5
+  create-pull-request:
+    runs-on: ubuntu-latest
 
-            
-            # Create a pull request from develop to main
-            - name: Create Pull Request
-              uses: peter-evans/create-pull-request@v5
-              with:
-                token: ${{ secrets.GITHUB_TOKEN}}
-                base: main
-                head: develop
-                title: "Merge Develop branch into Main branch - Automated Pull Request"  
-                body: "This pull request was automatically created by a GitHub Action to merge the latest changes from the develop branch into the main branch. Please review the changes and merge if everything looks good."
-                draft: false
-                labels: "automated, merge, develop-to-main"
-                     
-  
-  
+    steps:
+      # Checkout the code
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      # Create a Pull Request using GitHub CLI
+      - name: Create Pull Request to main
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          head: develop
+          title: "Merge Develop into Main"
+          body: "This PR was automatically created by GitHub Actions."
+          draft: false
+          labels: automated-pr
