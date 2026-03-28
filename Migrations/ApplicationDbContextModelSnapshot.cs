@@ -184,7 +184,7 @@ namespace School_Management_System.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("UserRoles");
+                    b.ToTable("user_roles", (string)null);
                 });
 
             modelBuilder.Entity("School_Management_System.RolePermission", b =>
@@ -199,7 +199,7 @@ namespace School_Management_System.Migrations
 
                     b.HasIndex("PermissionId");
 
-                    b.ToTable("RolePermissions");
+                    b.ToTable("role_permissions", (string)null);
                 });
 
             modelBuilder.Entity("School_Management_System.Models.Department", b =>
