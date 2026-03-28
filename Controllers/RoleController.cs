@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using School_Management_System.Data;
+using School_Management_System.Models;
 using X.PagedList.Extensions;
 
 namespace School_Management_System.Controllers
@@ -27,6 +28,28 @@ namespace School_Management_System.Controllers
                             .ToPagedList(page, pageSize);
 
             return View(roles);
+       }
+       public async Task<IActionResult> Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(Role role)
+        {
+            if(ModelState.IsValid)
+            {
+                if(_applicationDbContext.Roles.Any(r => r.Name == role.Name))
+                {
+                    ModelState.AddModelError(nameof(role.Name), "A role with this name already exists.");
+                    return View(role);
+                }
+                _applicationDbContext.Roles.Add(role);
+                await _applicationDbContext.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(role);
         }
 
     }
