@@ -1,27 +1,86 @@
-name: Create PR from Develop to Main
+name: Auto PR From Develop To Main
 
 on:
   push:
     branches:
       - develop
 
+permissions:
+  contents: write
+  pull-requests: write
+
 jobs:
-  create-pull-request:
+  create-pr-and-merge:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the code
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v5
 
-      # Create a Pull Request using GitHub CLI
-      - name: Create Pull Request to main
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: main
-          head: develop
-          title: "Merge Develop into Main"
-          body: "This PR was automatically created by GitHub Actions."
-          draft: false
-          labels: automated-pr
+      - name: Create Pull Request If Not Exists
+        id: create_pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=$(gh pr list --base main --head develop --state open --json number --jq '.[0].number')
+
+          if [ -z "$PR_NUMBER" ]; then
+            gh pr create \
+              --base main \
+              --head develop \
+              --title "Merge Develop Into Main" \
+              --body "This PR was automatically created from develop to main."
+            
+            PR_NUMBER=$(gh pr list --base main --head develop --state open --json number --jq '.[0].number')
+          fi
+
+          echo "pr_number=$PR_NUMBER" >> $GITHUB_OUTPUT
+
+      - name: Wait And Check Mergeability
+        id: check_merge
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=${{ steps.create_pr.outputs.pr_number }}
+
+          for i in {1..10}; do
+            MERGEABLE=$(gh pr view $PR_NUMBER --json mergeable --jq '.mergeable')
+            echo "Attempt $i: Mergeable = $MERGEABLE"
+
+            if [ "$MERGEABLE" != "UNKNOWN" ]; then
+              break
+            fi
+
+            sleep 3
+          done
+
+          echo "mergeable=$MERGEABLE" >> $GITHUB_OUTPUT
+
+      - name: Auto Merge If No Conflict
+        if: steps.check_merge.outputs.mergeable == 'MERGEABLE'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=${{ steps.create_pr.outputs.pr_number }}
+          gh pr merge $PR_NUMBER --merge --delete-branch=false
+
+      - name: Assign If Conflict
+        if: steps.check_merge.outputs.mergeable == 'CONFLICTING'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=${{ steps.create_pr.outputs.pr_number }}
+
+          gh pr edit $PR_NUMBER \
+            --add-assignee hulmarady
+
+          gh pr comment $PR_NUMBER --body "⚠️ This pull request has merge conflicts and needs manual checking."
+
+      - name: Comment If Mergeability Unknown
+        if: steps.check_merge.outputs.mergeable != 'MERGEABLE' && steps.check_merge.outputs.mergeable != 'CONFLICTING'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_NUMBER=${{ steps.create_pr.outputs.pr_number }}
+
+          gh pr comment $PR_NUMBER --body "⚠️ GitHub could not determine mergeability automatically. Please check this PR manually."
