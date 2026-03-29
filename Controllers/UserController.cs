@@ -22,9 +22,10 @@ namespace School_Management_System.Controllers
             if(!string.IsNullOrEmpty(search))
             {
                 query = query.Where(user => 
+                    user.FirstName.Contains(search) ||
+                    user.LastName.Contains(search) ||
                     user.Username.Contains(search) ||
-                    user.Email.Contains(search) || 
-                    user.Role.Contains(search)
+                    user.Email.Contains(search)  
                 );
             }
 
@@ -57,7 +58,6 @@ namespace School_Management_System.Controllers
                 }
 
                 user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
-                user.Role = user.Role ?? "User";
                 user.CreatedAt = DateTime.UtcNow;
                 user.UpdatedAt = DateTime.UtcNow;
 
@@ -111,7 +111,6 @@ namespace School_Management_System.Controllers
 
                 existingUser.Username = user.Username;
                 existingUser.Email = user.Email;
-                existingUser.Role = user.Role;
 
                 _applicationDbContext.Users.Update(existingUser);
                 await _applicationDbContext.SaveChangesAsync();
