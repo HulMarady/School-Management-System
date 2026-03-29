@@ -1,9 +1,10 @@
 name: Auto PR From Develop To Main
 
 on:
-  push:
-    branches:
-      - develop
+  # push:
+  #   branches:
+  #     - develop
+  workflow_dispatch:
 
 permissions:
   contents: write
