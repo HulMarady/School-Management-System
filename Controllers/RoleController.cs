@@ -81,7 +81,7 @@ namespace School_Management_System.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(Role role, int id)
         {
-            if(id !== role.Id)
+            if(id != role.Id)
                 return NotFound();
 
             if(ModelState.IsValid)
