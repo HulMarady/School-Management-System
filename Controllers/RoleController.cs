@@ -1,5 +1,7 @@
+using System.Runtime.Serialization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using School_Management_System.Data;
 using School_Management_System.Models;
 using X.PagedList.Extensions;
@@ -52,7 +54,7 @@ namespace School_Management_System.Controllers
             return View(role);
         }
 
-        public async Task<IActionResult> Detaisl(int id)
+        public async Task<IActionResult> Details(int id)
         {
             if(id < 0)
                 return NotFound(); 
@@ -64,5 +66,18 @@ namespace School_Management_System.Controllers
 
             return View(role);
         }
+        public async Task<IActionResult> Edit(int id)
+        {
+            if(id < 0)
+                return NotFound();
+
+            var role = await _applicationDbContext.Roles.FirstOrDefaultAsync(role => role.Id == id);
+
+            if(role is null)
+                return NotFound();
+
+            return View(role);
+        }
+        
     }
 }
