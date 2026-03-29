@@ -38,6 +38,14 @@ namespace School_Management_System.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Role role)
         {
+            if(!ModelState.IsValid)
+            {
+                foreach(var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine(error.ErrorMessage);
+                }
+            }
+
             if(ModelState.IsValid)
             {
                 if(_applicationDbContext.Roles.Any(r => r.Name == role.Name))
