@@ -78,6 +78,27 @@ namespace School_Management_System.Controllers
 
             return View(role);
         }
-        
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(Role role, int id)
+        {
+            if(id !== role.Id)
+                return NotFound();
+
+            if(ModelState.IsValid)
+            {
+                if(_applicationDbContext.Roles.Any(r => r.Name == role.Name && r.Id != id))
+                {
+                    ModelState.AddModelError(nameof(role.Name), "A role with this name already exists.");
+                    return View(role);
+                }
+
+                _applicationDbContext.Roles.Update(role);
+                await _applicationDbContext.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            
+            return View(role);
+        }
     }
 }
