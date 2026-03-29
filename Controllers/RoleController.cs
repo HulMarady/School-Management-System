@@ -52,5 +52,17 @@ namespace School_Management_System.Controllers
             return View(role);
         }
 
+        public async Task<IActionResult> Detaisl(int id)
+        {
+            if(id < 0)
+                return NotFound(); 
+
+            var role = _applicationDbContext.Roles.FirstOrDefault(role => role.Id == id);
+
+            if(role is null)
+                return NotFound();
+
+            return View(role);
+        }
     }
 }
