@@ -1,0 +1,283 @@
+@model X.PagedList.IPagedList<School_Management_System.Models.Role>
+@{
+    Layout = "~/Views/Shared/_DashboardLayout.cshtml";
+    ViewBag.Title = "Roles Management";
+    ViewBag.ActiveMenu = "Roles";
+}
+
+<div class="space-y-6">
+    <!-- Page Header -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h2 class="text-2xl font-bold text-gray-800">Roles Management</h2>
+            <p class="text-gray-500 mt-1">Manage and view all registered roles in the system</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="@Url.Action("Create", "Role")" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2 shadow-sm">
+                <i class="fas fa-user-plus"></i>
+                <span>Add New Role</span>
+            </a>
+            <a href="@Url.Action("Export", "Role", new { search = Context.Request.Query["search"] })" class="border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 px-4 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2">
+                <i class="fas fa-download"></i>
+                <span>Export</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Total Roles</p>
+                    <p class="text-2xl font-bold text-gray-800">@Model.TotalItemCount</p>
+                </div>
+                <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-users text-indigo-600"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Admins</p>
+                    <p class="text-2xl font-bold text-purple-600">@Model.Count(r => r.Name == "Admin")</p>
+                </div>
+                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-user-shield text-purple-600"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Teachers</p>
+                    <p class="text-2xl font-bold text-blue-600">@Model.Count(r => r.Name == "Teacher")</p>
+                </div>
+                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-chalkboard-user text-blue-600"></i>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-gray-500 text-sm">Students</p>
+                    <p class="text-2xl font-bold text-green-600">@Model.Count(r => r.Name == "Student")</p>
+                </div>
+                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-graduation-cap text-green-600"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter Bar -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+        <form method="get" action="@Url.Action("Index", "Role")" class="flex flex-col sm:flex-row gap-3">
+            <div class="flex-1 relative">
+                <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
+                <input type="text" 
+                       name="search" 
+                       value="@Context.Request.Query["search"]" 
+                       placeholder="Search by role name..." 
+                       class="w-full pl-9 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all" />
+            </div>
+            <div class="flex gap-2">
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2">
+                    <i class="fas fa-search text-sm"></i>
+                    <span>Search</span>
+                </button>
+                <a href="@Url.Action("Index", "Role")" class="border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 px-6 py-2 rounded-lg transition-colors duration-200 flex items-center gap-2">
+                    <i class="fas fa-undo-alt text-sm"></i>
+                    <span>Reset</span>
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Roles Table -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-hashtag"></i>
+                                <span>ID</span>
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-user"></i>
+                                <span>Name</span>
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-calendar-plus"></i>
+                                <span>Created At</span>
+                            </div>
+                        </th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-calendar-edit"></i>
+                                <span>Updated At</span>
+                            </div>
+                        </th>
+                        <th scope="col" class="relative px-6 py-3">
+                            <span class="sr-only">Actions</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @if (Model.Any())
+                    {
+                        foreach (var user in Model)
+                        {
+                            <tr class="hover:bg-gray-50 transition-colors duration-150">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    #@user.Id
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-10 w-10">
+                                            <div class="h-10 w-10 rounded-full bg-gradient-to-r from-indigo-400 to-indigo-600 flex items-center justify-center text-white font-medium">
+                                                @user.Name?.Substring(0, 1).ToUpper()
+                                            </div>
+                                        </div>
+                                        <div class="ml-4">
+                                            <div class="text-sm font-medium text-gray-900">@user.Name</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <div class="flex items-center gap-1">
+                                        <i class="fas fa-clock text-gray-400 text-xs"></i>
+                                        @user.CreatedAt.ToString("MMM dd, yyyy HH:mm")
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <div class="flex items-center gap-1">
+                                        <i class="fas fa-clock text-gray-400 text-xs"></i>
+                                        @user.UpdatedAt.ToString("MMM dd, yyyy HH:mm")
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <div class="flex items-center justify-end gap-2">
+                                        <a href="@Url.Action("Details", "Role", new { id = user.Id })" class="text-indigo-600 hover:text-indigo-900 transition-colors p-1" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="@Url.Action("Edit", "Role", new { id = user.Id })" class="text-blue-600 hover:text-blue-900 transition-colors p-1" title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="@Url.Action("Delete", "Role", new { id = user.Id })" class="text-red-600 hover:text-red-900 transition-colors p-1" title="Delete">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="px-6 py-12 text-center">
+                                <div class="flex flex-col items-center justify-center">
+                                    <i class="fas fa-users-slash text-5xl text-gray-300 mb-3"></i>
+                                    <p class="text-gray-500 text-lg">No roles found</p>
+                                    <p class="text-gray-400 text-sm mt-1">Try adjusting your search or add a new role</p>
+                                    @if (!string.IsNullOrEmpty(Context.Request.Query["search"]))
+                                    {
+                                        <a href="@Url.Action("Index", "Role")" class="mt-4 text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                                            Clear search
+                                        </a>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (Model.PageCount > 1)
+        {
+            <div class="bg-white px-4 py-3 border-t border-gray-200 sm:px-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div class="text-sm text-gray-700">
+                        Showing <span class="font-medium">@((Model.PageNumber - 1) * Model.PageSize + 1)</span> to 
+                        <span class="font-medium">@Math.Min(Model.PageNumber * Model.PageSize, Model.TotalItemCount)</span> of 
+                        <span class="font-medium">@Model.TotalItemCount</span> results
+                    </div>
+                    <div class="flex items-center gap-2">
+                        @if (Model.HasPreviousPage)
+                        {
+                            <a href="@Url.Action("Index", new { search = Context.Request.Query["search"], page = Model.PageNumber - 1, pageSize = Model.PageSize })" 
+                               class="px-3 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors">
+                                <i class="fas fa-chevron-left text-xs"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="px-3 py-2 rounded-lg border border-gray-200 text-gray-400 cursor-not-allowed">
+                                <i class="fas fa-chevron-left text-xs"></i>
+                            </span>
+                        }
+                        
+                        @for (int i = 1; i <= Model.PageCount; i++)
+                        {
+                            if (i == Model.PageNumber)
+                            {
+                                <span class="px-4 py-2 rounded-lg bg-indigo-600 text-white font-medium shadow-sm">
+                                    @i
+                                </span>
+                            }
+                            else if (i == 1 || i == Model.PageCount || (i >= Model.PageNumber - 2 && i <= Model.PageNumber + 2))
+                            {
+                                <a href="@Url.Action("Index", new { search = Context.Request.Query["search"], page = i, pageSize = Model.PageSize })" 
+                                   class="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors">
+                                    @i
+                                </a>
+                            }
+                            else if (i == Model.PageNumber - 3 || i == Model.PageNumber + 3)
+                            {
+                                <span class="px-2 text-gray-400">...</span>
+                            }
+                        }
+                        
+                        @if (Model.HasNextPage)
+                        {
+                            <a href="@Url.Action("Index", new { search = Context.Request.Query["search"], page = Model.PageNumber + 1, pageSize = Model.PageSize })" 
+                               class="px-3 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors">
+                                <i class="fas fa-chevron-right text-xs"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="px-3 py-2 rounded-lg border border-gray-200 text-gray-400 cursor-not-allowed">
+                                <i class="fas fa-chevron-right text-xs"></i>
+                            </span>
+                        }
+                        
+                        <form method="get" action="@Url.Action("Index", "Role")" class="inline-block">
+                            <input type="hidden" name="search" value="@Context.Request.Query["search"]" />
+                            <select name="pageSize" onchange="this.form.submit()" 
+                                    class="ml-2 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                @foreach (var size in new[] { 10, 20, 50, 100 })
+                                {
+                                    <option value="@size" selected="@(Model.PageSize == size)">
+                                        @size per page
+                                    </option>
+                                }
+                            </select>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
