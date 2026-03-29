@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -99,6 +98,32 @@ namespace School_Management_System.Controllers
             }
             
             return View(role);
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            if(id < 0)
+                return NotFound();
+
+            var role = await _applicationDbContext.Roles.FirstOrDefaultAsync(role => role.Id == id);
+
+            if(role is null)
+                return NotFound();
+
+            return View(role);
+       }
+
+       [HttpPost, ActionName("Delete")]
+       public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var role = await _applicationDbContext.Roles.FirstOrDefaultAsync(role => role.Id == id);
+
+            if(role is null)
+                return NotFound();
+
+            _applicationDbContext.Roles.Remove(role);
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
     }
 }
