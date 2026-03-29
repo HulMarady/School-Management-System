@@ -111,6 +111,19 @@ namespace School_Management_System.Controllers
                 return NotFound();
 
             return View(role);
+       }
+
+       [HttpPost, ActionName("Delete")]
+       public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var role = await _applicationDbContext.Roles.FirstOrDefaultAsync(role => role.Id == id);
+
+            if(role is null)
+                return NotFound();
+
+            _applicationDbContext.Roles.Remove(role);
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
     }
 }
