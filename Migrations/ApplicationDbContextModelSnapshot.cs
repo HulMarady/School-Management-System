@@ -87,7 +87,8 @@ namespace School_Management_System.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime(6)");
