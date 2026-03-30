@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using School_Management_System.Data;
+using School_Management_System.Models;
 using X.PagedList.Extensions;
 
 namespace School_Management_System.Controllers
@@ -25,5 +27,40 @@ namespace School_Management_System.Controllers
 
             return View(permissions);
         }
+        
+        public async Task<IActionResult> Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Permission permission)
+        {
+            if(!ModelState.IsValid)
+            {
+                return View(permission);
+            }
+
+            bool isExistinngPermission = await _applicationDbContext.Permissions
+                                                    .AnyAsync(p => p.Name == permission.Name);
+            
+            if(isExistinngPermission)
+            {
+                ModelState.AddModelError(nameof(permission.Name), "A permission with this name already exists.");
+                return View(permission);
+            }
+
+            if(ModelState.IsValid)
+            {
+                _applicationDbContext.Permissions.Add(permission);
+                await _applicationDbContext.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(permission);
+
+        }
+
     }
 }
