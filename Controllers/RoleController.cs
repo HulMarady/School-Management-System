@@ -36,19 +36,19 @@ namespace School_Management_System.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Role role)
         {
             if(!ModelState.IsValid)
             {
-                foreach(var error in ModelState.Values.SelectMany(v => v.Errors))
-                {
-                    Console.WriteLine(error.ErrorMessage);
-                }
+                return View(role);
             }
+
+            bool isExistingRole = await _applicationDbContext.Roles.AnyAsync(r => r.Name == role.Name);
 
             if(ModelState.IsValid)
             {
-                if(_applicationDbContext.Roles.Any(r => r.Name == role.Name))
+                if(isExistingRole)
                 {
                     ModelState.AddModelError(nameof(role.Name), "A role with this name already exists.");
                     return View(role);
