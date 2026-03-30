@@ -59,8 +59,20 @@ namespace School_Management_System.Controllers
             }
 
             return View(permission);
-
         }
 
+        public async Task<IActionResult> Details(int id)
+        {
+            if(id < 0)
+                return NotFound();
+            
+            var permission = await _applicationDbContext.Permissions
+                                        .FirstOrDefaultAsync(p => p.Id == id);
+
+            if(permission is null)
+                return NotFound();
+
+            return View(permission);
+        }
     }
 }
