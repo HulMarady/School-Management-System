@@ -99,9 +99,13 @@
                         <i class="fas fa-user w-5 h-5 mr-3"></i>
                         <span class="font-medium">Users</span>
                     </a>
-                    <a href="@Url.Action("Reports", "Dashboard")" class="flex items-center px-4 py-3 text-indigo-100 rounded-lg hover:bg-indigo-600 hover:text-white transition-all duration-200 group @(ViewBag.ActiveMenu == "Reports" ? "bg-indigo-600 text-white" : "")">
-                        <i class="fas fa-bar-chart w-5 h-5 mr-3"></i>
-                        <span class="font-medium">Reports</span>
+                    <a href="@Url.Action("Index", "Role")" class="flex items-center px-4 py-3 text-indigo-100 rounded-lg hover:bg-indigo-600 hover:text-white transition-all duration-200 group @(ViewBag.ActiveMenu == "Roles" ? "bg-indigo-600 text-white" : "")">
+                        <i class="fas fa-user-tag w-5 h-5 mr-3"></i>
+                        <span class="font-medium">Roles</span>
+                    </a>
+                    <a href="@Url.Action("Index", "Permission")"  class="flex items-center px-4 py-3 text-indigo-100 rounded-lg hover:bg-indigo-600 hover:text-white transition-all duration-200 group @(ViewBag.ActiveMenu == "Permissions" ? "bg-indigo-600 text-white" : "")">
+                        <i class="fas fa-key w-5 h-5 mr-3"></i>
+                        <span class="font-medium">Permissions</span>
                     </a>
                 </nav>
 
