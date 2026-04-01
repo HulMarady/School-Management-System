@@ -41,7 +41,7 @@ namespace School_Management_System.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Role role, int[] permissionIds)
+        public async Task<IActionResult> Create(Role role, int[] PermissionIds)
         {
            try
             {
@@ -68,9 +68,9 @@ namespace School_Management_System.Controllers
                 _applicationDbContext.Roles.Add(role);
                 await _applicationDbContext.SaveChangesAsync();
 
-                if(permissionIds != null && permissionIds.Any())
+                if(PermissionIds != null && PermissionIds.Any())
                 {
-                    var rolePermissions = permissionIds.Select(permissionId => new RolePermission
+                    var rolePermissions = PermissionIds.Select(permissionId => new RolePermission
                     {
                         RoleId = role.Id,
                         PermissionId = permissionId
@@ -96,7 +96,7 @@ namespace School_Management_System.Controllers
             if(id < 0)
                 return NotFound(); 
 
-            var role = await _applicationDbContext.Roles.FirstOrDefault(role => role.Id == id);
+            var role = await _applicationDbContext.Roles.FirstOrDefaultAsync(role => role.Id == id);
 
             if(role is null)
                 return NotFound();
