@@ -119,25 +119,55 @@ namespace School_Management_System.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(Role role, int id)
+        public async Task<IActionResult> Edit(Role role, int id, int[] PermissionIds)
         {
+            if(!ModelState.IsValid)
+            {
+                return View(role);
+            }
+
             if(id != role.Id)
                 return NotFound();
-
-            if(ModelState.IsValid)
+            
+            if(await _applicationDbContext.Roles.AnyAsync(r => r.Name == role.Name && r.Id != id))
             {
-                if(_applicationDbContext.Roles.Any(r => r.Name == role.Name && r.Id != id))
-                {
-                    ModelState.AddModelError(nameof(role.Name), "A role with this name already exists.");
-                    return View(role);
-                }
+                ModelState.AddModelError(nameof(role.Name), "A role with this name already exists.");
+                return View(role);
+            }
 
-                _applicationDbContext.Roles.Update(role);
+            using var transaction = await _applicationDbContext.Database.BeginTransactionAsync();
+
+            var existingRole = await _applicationDbContext.Roles
+                                        .Include(rp => rp.RolesPermissions)
+                                        .FirstOrDefaultAsync(r => r.Id == id);
+
+            if(existingRole is null)
+                return NotFound();
+
+            existingRole.Name = role.Name.Trim();
+            _applicationDbContext.Roles.Update(existingRole);
+            await _applicationDbContext.SaveChangesAsync();
+
+            if(existingRole.RolesPermissions != null && existingRole.RolesPermissions.Any())
+            {
+                _applicationDbContext.RolePermissions.RemoveRange(existingRole.RolesPermissions);
                 await _applicationDbContext.SaveChangesAsync();
+            }
+
+            if(PermissionIds != null && PermissionIds.Any())
+            {
+                var rolePermissions = PermissionIds.Select(permissionId => new RolePermission
+                {
+                    RoleId = existingRole.Id,
+                    PermissionId = permissionId
+                }).ToList();
+
+                _applicationDbContext.RolePermissions.AddRange(rolePermissions);
+                await _applicationDbContext.SaveChangesAsync();
+
+                await transaction.CommitAsync();
                 return RedirectToAction(nameof(Index));
             }
-            
-            return View(role);
         }
 
         public async Task<IActionResult> Delete(int id)
