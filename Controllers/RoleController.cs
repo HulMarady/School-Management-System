@@ -30,8 +30,12 @@ namespace School_Management_System.Controllers
 
             return View(roles);
        }
-       public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create()
         {
+            var permissions = await _applicationDbContext.Permissions
+                                        .OrderBy(p => p.Name)
+                                        .ToListAsync();
+            ViewBag.Permissions = permissions;
             return View();
         }
 
@@ -41,6 +45,10 @@ namespace School_Management_System.Controllers
         {
             if(!ModelState.IsValid)
             {
+                foreach(var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine(error.ErrorMessage);
+                }
                 return View(role);
             }
 
@@ -53,6 +61,7 @@ namespace School_Management_System.Controllers
                     ModelState.AddModelError(nameof(role.Name), "A role with this name already exists.");
                     return View(role);
                 }
+
                 _applicationDbContext.Roles.Add(role);
                 await _applicationDbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
