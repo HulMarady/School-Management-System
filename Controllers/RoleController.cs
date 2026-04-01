@@ -166,8 +166,9 @@ namespace School_Management_System.Controllers
                 await _applicationDbContext.SaveChangesAsync();
 
                 await transaction.CommitAsync();
-                return RedirectToAction(nameof(Index));
             }
+
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Delete(int id)
