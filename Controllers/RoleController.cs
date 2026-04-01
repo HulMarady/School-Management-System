@@ -41,33 +41,54 @@ namespace School_Management_System.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Role role)
+        public async Task<IActionResult> Create(Role role, int[] permissionIds)
         {
-            if(!ModelState.IsValid)
+           try
             {
-                foreach(var error in ModelState.Values.SelectMany(v => v.Errors))
+                if(!ModelState.IsValid)
                 {
-                    Console.WriteLine(error.ErrorMessage);
+                    return View(role);
                 }
-                return View(role);
-            }
 
-            bool isExistingRole = await _applicationDbContext.Roles.AnyAsync(r => r.Name == role.Name);
+                var normalizedRoleName = role.Name.Trim().ToLower();
 
-            if(ModelState.IsValid)
-            {
+                bool isExistingRole = await _applicationDbContext.Roles
+                                                 .AnyAsync(r => r.Name.ToLower() == normalizedRoleName);
+
                 if(isExistingRole)
                 {
                     ModelState.AddModelError(nameof(role.Name), "A role with this name already exists.");
                     return View(role);
                 }
 
+                using var transaction = await _applicationDbContext.Database.BeginTransactionAsync();
+
+                role.Name = role.Name.Trim();
+
                 _applicationDbContext.Roles.Add(role);
                 await _applicationDbContext.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
 
-            return View(role);
+                if(permissionIds != null && permissionIds.Any())
+                {
+                    var rolePermissions = permissionIds.Select(permissionId => new RolePermission
+                    {
+                        RoleId = role.Id,
+                        PermissionId = permissionId
+                    }).ToList();
+
+                    _applicationDbContext.RolePermissions.AddRange(rolePermissions);
+                    await _applicationDbContext.SaveChangesAsync();
+                }
+
+                await transaction.CommitAsync();
+
+                return RedirectToAction(nameof(Index));
+            } 
+            catch(Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"An error occurred while creating the role: {ex.Message}");
+                return View(role);
+            }
         }
 
         public async Task<IActionResult> Details(int id)
@@ -75,7 +96,7 @@ namespace School_Management_System.Controllers
             if(id < 0)
                 return NotFound(); 
 
-            var role = _applicationDbContext.Roles.FirstOrDefault(role => role.Id == id);
+            var role = await _applicationDbContext.Roles.FirstOrDefault(role => role.Id == id);
 
             if(role is null)
                 return NotFound();
