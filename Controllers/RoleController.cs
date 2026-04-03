@@ -35,9 +35,13 @@ namespace School_Management_System.Controllers
             var permissions = await _applicationDbContext.Permissions
                                         .OrderBy(p => p.Name)
                                         .ToListAsync();
+
             ViewBag.Permissions = permissions;
             return View();
         }
+
+        
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -109,13 +113,16 @@ namespace School_Management_System.Controllers
                 return NotFound();
 
             var role = await _applicationDbContext.Roles
-                                .Include(rp => rp.RolesPermissions)
-                                .FirstOrDefaultAsync(role => role.Id == id);
-
+                                .Include(r => r.RolesPermissions)
+                                .FirstOrDefaultAsync(r => r.Id == id);
+            
             if(role is null)
                 return NotFound();
 
-            return View(role);
+            ViewBag.Permissions = await _applicationDbContext.Permissions
+                                        .OrderBy(p => p.Name)
+                                        .ToListAsync();
+            return View(role); 
         }
 
         [HttpPost]
