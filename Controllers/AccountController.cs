@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using School_Management_System.Data;
 using School_Management_System.Models;
 
@@ -47,7 +48,6 @@ namespace School_Management_System.Controllers
                 Username = user.Username,
                 Email = user.Email,
                 Password = BCrypt.Net.BCrypt.HashPassword(user.Password),
-                Role = user.Role ?? "Student"
             };
 
             // Save the new user to the database
@@ -79,7 +79,12 @@ namespace School_Management_System.Controllers
                 return View();
             }
 
-            var user =  _applicationDbContext.Users.FirstOrDefault(user => user.Email == email);
+            var user =  await _applicationDbContext.Users
+                            .Include(user => user.UserRoles)
+                            .ThenInclude(ur => ur.Role)
+                            .ThenInclude(r => r.RolesPermissions)
+                            .ThenInclude(rp => rp.Permission)
+                            .FirstOrDefaultAsync(user => user.Email == email);
             if(user == null || !BCrypt.Net.BCrypt.Verify(password, user.Password))
             {
                 ModelState.AddModelError(string.Empty, "Invalid email or password");
@@ -91,6 +96,11 @@ namespace School_Management_System.Controllers
             {
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Role, string.Join(",", user.UserRoles.Select(ur => ur.Role.Name))),
+                new Claim("Permissions", string.Join(",", user.UserRoles
+                                               .SelectMany(ur => ur.Role.RolesPermissions
+                                               .Select(rp => rp.Permission.Name))))
             };
 
             // Create the identity and principal
