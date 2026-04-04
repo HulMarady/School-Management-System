@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using School_Management_System.Authorization;
 using School_Management_System.Data;
 using School_Management_System.Models;
 using X.PagedList.Extensions;
 
 namespace School_Management_System.Controllers
 {
-    [Authorize]
+    // [Authorize(Roles = "Admin")]
     public class RoleController : Controller
     {
         private readonly ApplicationDbContext _applicationDbContext;
@@ -15,6 +16,8 @@ namespace School_Management_System.Controllers
         {
             _applicationDbContext = applicationDbContext;
         }
+
+        // [HasPermission("role.view")]
         public ActionResult Index(string? search, int page = 1, int pageSize = 10)
         {
             var query = _applicationDbContext.Roles.AsQueryable();
@@ -29,7 +32,9 @@ namespace School_Management_System.Controllers
                             .ToPagedList(page, pageSize);
 
             return View(roles);
-       }
+        }
+
+        // [HasPermission("role.create")]
         public async Task<IActionResult> Create()
         {
             var permissions = await _applicationDbContext.Permissions
@@ -40,11 +45,9 @@ namespace School_Management_System.Controllers
             return View();
         }
 
-        
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
+        // [HasPermission("role.create")]
         public async Task<IActionResult> Create(Role role, int[] PermissionIds)
         {
            try
@@ -95,6 +98,7 @@ namespace School_Management_System.Controllers
             }
         }
 
+        // [HasPermission("role.view")]
         public async Task<IActionResult> Details(int id)
         {
             if(id < 0)
@@ -107,6 +111,7 @@ namespace School_Management_System.Controllers
 
             return View(role);
         }
+        // [HasPermission("role.edit")]
         public async Task<IActionResult> Edit(int id)
         {
             if(id < 0)
@@ -126,6 +131,7 @@ namespace School_Management_System.Controllers
         }
 
         [HttpPost]
+        // [HasPermission("role.edit")]
         public async Task<IActionResult> Edit(Role role, int id, int[] PermissionIds)
         {
             if(!ModelState.IsValid)
@@ -178,6 +184,7 @@ namespace School_Management_System.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // [HasPermission("role.delete")]
         public async Task<IActionResult> Delete(int id)
         {
             if(id < 0)
@@ -192,6 +199,7 @@ namespace School_Management_System.Controllers
        }
 
        [HttpPost, ActionName("Delete")]
+    //    [HasPermission("role.delete")]
        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var role = await _applicationDbContext.Roles.FirstOrDefaultAsync(role => role.Id == id);
