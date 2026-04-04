@@ -37,23 +37,37 @@ namespace School_Management_System.Controllers
 
         public async Task<IActionResult> Create()
         {
+
+            var role = await _applicationDbContext.Roles
+                                .OrderBy(role => role.Name)
+                                .ToListAsync();
+
+            ViewBag.Roles = role;
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(User user, string ConfirmPassword)
+        public async Task<IActionResult> Create(User user, string ConfirmPassword, int RoleId)
         {
             if(ModelState.IsValid)
             {
                 if(await _applicationDbContext.Users.AnyAsync(u => u.Email == user.Email))
                 {
                     ModelState.AddModelError("Email", "Email already exists.");
+                    var roles = await _applicationDbContext.Roles
+                                        .OrderBy(role => role.Name)
+                                        .ToListAsync();
+                    ViewBag.Roles = roles;
                     return View(user);
                 }
 
                 if(user.Password != ConfirmPassword)
                 {
                     ModelState.AddModelError("ConfirmPassword", "Passwords do not match");
+                    var roles = await _applicationDbContext.Roles
+                                        .OrderBy(role => role.Name)
+                                        .ToListAsync();
+                    ViewBag.Roles = roles;
                     return View(user);
                 }
 
@@ -61,11 +75,26 @@ namespace School_Management_System.Controllers
                 user.CreatedAt = DateTime.UtcNow;
                 user.UpdatedAt = DateTime.UtcNow;
 
+                if(RoleId > 0)
+                {
+                    var userRole = new UserRole
+                    {
+                        RoleId = RoleId,
+                        User = user
+                    };
+                    _applicationDbContext.UserRoles.Add(userRole);
+                }
+
+
                 _applicationDbContext.Users.Add(user);
                 await _applicationDbContext.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
+            var allRoles = await _applicationDbContext.Roles
+                                .OrderBy(role => role.Name)
+                                .ToListAsync();
+            ViewBag.Roles = allRoles;
             return View(user);
         }
 
@@ -74,8 +103,8 @@ namespace School_Management_System.Controllers
             if(id <= 0)
                return NotFound();
             
-            var user = _applicationDbContext.Users
-                            .FirstOrDefault(user => user.Id == id);
+            var user = await _applicationDbContext.Users
+                            .FirstOrDefaultAsync(user => user.Id == id);
             if(user == null)
                 return NotFound();
 
@@ -87,11 +116,16 @@ namespace School_Management_System.Controllers
             if(id <= 0)
                 return NotFound();
 
-            var user = _applicationDbContext.Users
-                            .FirstOrDefault(user => user.Id == id);
+            var user = await _applicationDbContext.Users
+                            .FirstOrDefaultAsync(user => user.Id == id);
 
             if(user == null)
                 return NotFound();
+
+            var roles = await _applicationDbContext.Roles
+                                .OrderBy(role => role.Name)
+                                .ToListAsync();
+            ViewBag.Roles = roles;
             
             return View(user);
         }
@@ -104,8 +138,8 @@ namespace School_Management_System.Controllers
             
             if(ModelState.IsValid)
             {
-                var existingUser = _applicationDbContext.Users
-                                        .FirstOrDefault(user => user.Id == id);
+                var existingUser = await _applicationDbContext.Users
+                                                .FirstOrDefaultAsync(user => user.Id == id);
                 if(existingUser == null)
                     return NotFound();
 
@@ -125,8 +159,8 @@ namespace School_Management_System.Controllers
             if(id <= 0)
                 return NotFound();
             
-            var user = _applicationDbContext.Users
-                            .FirstOrDefault(user => user.Id == id);
+            var user = await _applicationDbContext.Users
+                            .FirstOrDefaultAsync(user => user.Id == id);
             if(user == null)
                 return NotFound();
 
@@ -139,8 +173,8 @@ namespace School_Management_System.Controllers
             if(id <= 0)
                 return NotFound();
 
-            var user = _applicationDbContext.Users
-                            .FirstOrDefault(user => user.Id == id);
+            var user = await _applicationDbContext.Users
+                            .FirstOrDefaultAsync(user => user.Id == id);
 
             if(user == null)
                 return NotFound();
