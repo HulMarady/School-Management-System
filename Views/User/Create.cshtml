@@ -78,26 +78,33 @@
 
                         <!-- Role Field -->
                         <div>
-                            <label asp-for="Role" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label name="RoleId" class="block text-sm font-medium text-gray-700 mb-2">
                                 Role <span class="text-red-500">*</span>
                             </label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <i class="fas fa-tag text-gray-400"></i>
                                 </div>
-                                <select asp-for="Role" 
+                                <select name="RoleId" 
                                         id="Role"
                                         class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all appearance-none bg-white">
                                     <option value="">Select a role</option>
-                                    <option value="Admin">Admin</option>
-                                    <option value="Teacher">Teacher</option>
-                                    <option value="Student">Student</option>
+                                    @if (ViewBag.Roles != null)
+                                    {
+                                        foreach (var role in ViewBag.Roles)
+                                        {
+                                            <option value="@role.Id">@role.Name</option>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <option value="" disabled>No roles available</option>
+                                    }
                                 </select>
                                 <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                                     <i class="fas fa-chevron-down text-gray-400"></i>
                                 </div>
                             </div>
-                            <span asp-validation-for="Role" class="text-sm text-red-600 mt-1 block"></span>
                         </div>
                     </div>
 
