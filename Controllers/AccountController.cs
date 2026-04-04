@@ -96,12 +96,19 @@ namespace School_Management_System.Controllers
             {
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, string.Join(",", user.UserRoles.Select(ur => ur.Role.Name))),
-                new Claim("Permissions", string.Join(",", user.UserRoles
-                                               .SelectMany(ur => ur.Role.RolesPermissions
-                                               .Select(rp => rp.Permission.Name))))
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
+            
+            claims.AddRange(user.UserRoles
+                .Select(user => user.Role.Name)
+                .Distinct()
+                .Select(roleName => new Claim(ClaimTypes.Role, roleName)));
+
+            claims.AddRange(user.UserRoles
+                .SelectMany(ur => ur.Role.RolesPermissions)
+                .Select(p => p.Permission.Name)
+                .Distinct()
+                .Select(permission => new Claim("Permissions", permission)));
 
             // Create the identity and principal
             var identity = new ClaimsIdentity(
