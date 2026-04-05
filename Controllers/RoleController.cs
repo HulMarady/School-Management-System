@@ -184,7 +184,7 @@ namespace School_Management_System.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // [HasPermission("role.delete")]
+        [HasPermission("role.delete")]
         public async Task<IActionResult> Delete(int id)
         {
             if(id < 0)
