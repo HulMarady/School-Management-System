@@ -98,7 +98,7 @@ namespace School_Management_System.Controllers
             }
         }
 
-        // [HasPermission("role.view")]
+        [HasPermission("role.view")]
         public async Task<IActionResult> Details(int id)
         {
             if(id < 0)
