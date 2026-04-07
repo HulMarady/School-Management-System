@@ -104,7 +104,10 @@ namespace School_Management_System.Controllers
             if(id < 0)
                 return NotFound(); 
 
-            var role = await _applicationDbContext.Roles.FirstOrDefaultAsync(role => role.Id == id);
+            var role = await _applicationDbContext.Roles
+                                .Include(r => r.RolesPermissions)
+                                    .ThenInclude(rp => rp.Permission)
+                                .FirstOrDefaultAsync(role => role.Id == id);
 
             if(role is null)
                 return NotFound();
