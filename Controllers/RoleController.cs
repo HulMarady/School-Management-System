@@ -8,7 +8,7 @@ using X.PagedList.Extensions;
 
 namespace School_Management_System.Controllers
 {
-    // [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin")]
     public class RoleController : Controller
     {
         private readonly ApplicationDbContext _applicationDbContext;
