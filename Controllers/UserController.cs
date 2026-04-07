@@ -97,6 +97,7 @@ namespace School_Management_System.Controllers
             ViewBag.Roles = allRoles;
             return View(user);
         }
+        
 
         public async Task<IActionResult> Details(int id)
         {
