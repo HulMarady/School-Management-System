@@ -98,7 +98,7 @@ namespace School_Management_System.Controllers
             }
         }
 
-        // [HasPermission("role.view")]
+        [HasPermission("role.view")]
         public async Task<IActionResult> Details(int id)
         {
             if(id < 0)
@@ -184,7 +184,7 @@ namespace School_Management_System.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // [HasPermission("role.delete")]
+        [HasPermission("role.delete")]
         public async Task<IActionResult> Delete(int id)
         {
             if(id < 0)
