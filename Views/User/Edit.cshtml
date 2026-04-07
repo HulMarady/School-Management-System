@@ -110,7 +110,15 @@
                                     @foreach(var role in ViewBag.Roles as IEnumerable<Role>)
                                     {
                                         var isSelected = Model.UserRoles != null && Model.UserRoles.Any(ur => ur.RoleId == role.Id);
-                                        <option value="@role.Id" selected=@(isSelected ? "selected" : "")>@role.Name</option>
+                                        if(isSelected)
+                                        { 
+                                            <option value="@role.Id" selected>@role.Name</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@role.Id">@role.Name</option>
+                                        }
+
                                     }
                                 </select>
                                 <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
