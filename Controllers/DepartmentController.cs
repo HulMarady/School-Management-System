@@ -28,5 +28,12 @@ namespace School_Management_System.Controllers
             
             return View(departments);
         }
+
+        public async Task<IActionResult> Create()
+        {
+            var universities = await _applicationDbContext.Universities.ToListAsync();
+            ViewBag.Universities = universities;
+            return View();
+        }
     }
 }
