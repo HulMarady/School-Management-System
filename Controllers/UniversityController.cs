@@ -36,5 +36,28 @@ namespace School_Management_System.Controllers
             return View(universities);
         }
 
+        public async Task<IActionResult> Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(University university)
+        {
+            if(!ModelState.IsValid)
+            {
+                foreach(var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine(error.ErrorMessage);
+                }
+                return View(university);
+            }
+            _applicationDbContext.Universities.Add(university);
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+        
+        
     }
 }
