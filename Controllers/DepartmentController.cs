@@ -71,5 +71,20 @@ namespace School_Management_System.Controllers
             await _applicationDbContext.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            if(id <= 0)
+                return NotFound();
+
+            var department = _applicationDbContext.Departments
+                                .Include(department => department.University)
+                                .FirstOrDefault(department => department.Id == id);
+
+            if(department == null)
+                return NotFound();
+
+            return View(department);
+        }
     }
 }
