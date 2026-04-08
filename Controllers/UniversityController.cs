@@ -72,6 +72,36 @@ namespace School_Management_System.Controllers
             return View(university);
         }
 
-        
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, University university)
+        {
+            if(id != university.Id)
+                return NotFound();
+
+            var existingUniversity = await _applicationDbContext.Universities
+                                        .FindAsync(id);
+            if(existingUniversity is null)
+                return NotFound();
+
+            _applicationDbContext.Entry(existingUniversity).CurrentValues.SetValues(university);
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            if(id <=0)
+                return NotFound();
+
+            var university = await _applicationDbContext.Universities
+                                        .FindAsync(id);
+
+            if(university is null)
+                return NotFound();
+
+            return View(university);
+        }
+
     }
 }
