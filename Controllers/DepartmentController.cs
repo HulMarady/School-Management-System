@@ -88,6 +88,20 @@ namespace School_Management_System.Controllers
 
             return View(department);
         }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            if(id <= 0)
+                return NotFound();
+
+            var department = _applicationDbContext.Departments
+                                .Include(department => department.University)
+                                .FirstOrDefault(department => department.Id == id);
+            
+            if(department is null)
+                return NotFound();
+
+            return View(department);
+        }
     }
 }
-    
