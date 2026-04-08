@@ -103,5 +103,23 @@ namespace School_Management_System.Controllers
 
             return View(department);
         }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            if(id <= 0)
+                return NotFound();
+
+            var department = await _applicationDbContext.Departments
+                                .FirstOrDefaultAsync(department => department.Id == id);
+
+            if(department is null)
+                return NotFound();
+
+            _applicationDbContext.Departments.Remove(department);
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
