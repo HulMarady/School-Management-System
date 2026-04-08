@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using School_Management_System.Data;
+using School_Management_System.Models;
 using X.PagedList.Extensions;
 
 namespace School_Management_System.Controllers
@@ -34,6 +35,41 @@ namespace School_Management_System.Controllers
             var universities = await _applicationDbContext.Universities.ToListAsync();
             ViewBag.Universities = universities;
             return View();
+        }
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            if(id <= 0)
+                return NotFound();
+
+            var department = await _applicationDbContext.Departments
+                                        .Include(department => department.University)
+                                        .FirstOrDefaultAsync(department => department.Id == id);
+            
+            if(department == null)
+                return NotFound();
+
+            var universities = await _applicationDbContext.Universities.ToListAsync();
+            ViewBag.Universities = universities;
+
+            return View(department);
+        }
+
+        public async Task<IActionResult> Edit(int id, Department department)
+        {
+            if(id != department.Id)
+                return NotFound();
+
+            if(!ModelState.IsValid)
+            {
+                var universities = await _applicationDbContext.Universities.ToListAsync();
+                ViewBag.Universities = universities;
+                return View(department);
+            }
+
+            _applicationDbContext.Departments.Update(department);
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
     }
 }
