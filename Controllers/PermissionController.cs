@@ -74,6 +74,8 @@ namespace School_Management_System.Controllers
                 return NotFound();
             
             var permission = await _applicationDbContext.Permissions
+                                        .Include(p => p.RolesPermissions)
+                                            .ThenInclude(rp => rp.Role)
                                         .FirstOrDefaultAsync(p => p.Id == id);
 
             if(permission is null)
