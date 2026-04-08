@@ -103,5 +103,21 @@ namespace School_Management_System.Controllers
             return View(university);
         }
 
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            if(id <= 0)
+                return NotFound();
+            
+            var university = _applicationDbContext.Universities
+                                .FirstOrDefault(university => university.Id == id);
+
+            if(university is null)
+                return NotFound();
+
+            _applicationDbContext.Universities.Remove(university);
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
