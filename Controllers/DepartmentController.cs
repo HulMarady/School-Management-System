@@ -35,5 +35,23 @@ namespace School_Management_System.Controllers
             ViewBag.Universities = universities;
             return View();
         }
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            if(id <= 0)
+                return NotFound();
+
+            var department = await _applicationDbContext.Departments
+                                        .Include(department => department.University)
+                                        .FirstOrDefaultAsync(department => department.Id == id);
+            
+            if(department == null)
+                return NotFound();
+
+            var universities = await _applicationDbContext.Universities.ToListAsync();
+            ViewBag.Universities = universities;
+
+            return View(department);
+        }
     }
 }
