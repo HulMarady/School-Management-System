@@ -55,6 +55,8 @@ namespace School_Management_System.Controllers
             return View(department);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Department department)
         {
             if(id != department.Id)
@@ -88,3 +90,4 @@ namespace School_Management_System.Controllers
         }
     }
 }
+    
