@@ -31,6 +31,9 @@ public class User
     [StringLength(100, MinimumLength = 6)]
     public string Password { get; set; }
     public ICollection<UserRole>? UserRoles { get; set; }
+
+    // public int? DepartmentId { get; set; }
+    // public Department? Department { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     public DateTime UpdatedAt { get; set; } = DateTime.Now;
 }
