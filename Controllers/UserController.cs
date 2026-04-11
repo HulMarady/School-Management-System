@@ -97,6 +97,7 @@ namespace School_Management_System.Controllers
             ViewBag.Roles = allRoles;
             return View(user);
         }
+        
 
         public async Task<IActionResult> Details(int id)
         {
@@ -117,6 +118,7 @@ namespace School_Management_System.Controllers
                 return NotFound();
 
             var user = await _applicationDbContext.Users
+                            .Include(user => user.UserRoles)
                             .FirstOrDefaultAsync(user => user.Id == id);
 
             if(user == null)
@@ -131,13 +133,15 @@ namespace School_Management_System.Controllers
         }
         
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, User user)
+        public async Task<IActionResult> Edit(int id, User user, int RoleId)
         {
             if(id != user.Id)
                 return NotFound();
             
             if(ModelState.IsValid)
             {
+                Console.WriteLine($"Received RoleId: {RoleId} for User ID: {id}");
+
                 var existingUser = await _applicationDbContext.Users
                                                 .FirstOrDefaultAsync(user => user.Id == id);
                 if(existingUser == null)
@@ -147,11 +151,28 @@ namespace School_Management_System.Controllers
                 existingUser.Email = user.Email;
 
                 _applicationDbContext.Users.Update(existingUser);
-                await _applicationDbContext.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
 
-            return View(user);
+                if(RoleId != existingUser?.UserRoles?.FirstOrDefault()?.RoleId)
+                {
+                    var existingUserRole = await _applicationDbContext.UserRoles
+                                                    .FirstOrDefaultAsync(ur => ur.UserId == id);
+
+                    if(existingUserRole != null)
+                    {
+                        _applicationDbContext.UserRoles.Remove(existingUserRole);
+                        await _applicationDbContext.SaveChangesAsync();
+                    }
+                    
+                    var newUserRole = new  UserRole()
+                    {
+                        UserId = id,
+                        RoleId = RoleId
+                    };
+                    _applicationDbContext.UserRoles.Add(newUserRole);
+                } 
+            }
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Delete(int id)

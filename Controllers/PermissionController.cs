@@ -1,4 +1,5 @@
 using System.Security;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using School_Management_System.Data;
@@ -7,6 +8,7 @@ using X.PagedList.Extensions;
 
 namespace School_Management_System.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class PermissionController : Controller
     {
         private readonly ApplicationDbContext _applicationDbContext;
@@ -20,7 +22,7 @@ namespace School_Management_System.Controllers
 
             if(!string.IsNullOrEmpty(search))
             {
-                query.Where(permission => permission.Name.Contains(search));
+                query = query.Where(permission => permission.Name.Contains(search));
             }
 
             var permissions = query.OrderByDescending(permission => permission.CreatedAt)
@@ -72,6 +74,8 @@ namespace School_Management_System.Controllers
                 return NotFound();
             
             var permission = await _applicationDbContext.Permissions
+                                        .Include(p => p.RolesPermissions)
+                                            .ThenInclude(rp => rp.Role)
                                         .FirstOrDefaultAsync(p => p.Id == id);
 
             if(permission is null)
