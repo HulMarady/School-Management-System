@@ -214,5 +214,18 @@ namespace School_Management_System.Controllers
             await _applicationDbContext.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<IActionResult> GetRoles()
+        {
+            var roles = await _applicationDbContext.Roles
+                                .Select(r => new 
+                                    {
+                                        r.Id,
+                                        r.Name 
+                                    })
+                                .ToListAsync();
+
+            return Json(roles);
+        }
     }
 }
