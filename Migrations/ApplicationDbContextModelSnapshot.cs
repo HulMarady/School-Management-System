@@ -22,6 +22,32 @@ namespace School_Management_System.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("School_Management_System.Models.Course", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Credits")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.ToTable("Courses");
+                });
+
             modelBuilder.Entity("School_Management_System.Models.Department", b =>
                 {
                     b.Property<int>("Id")
@@ -200,6 +226,17 @@ namespace School_Management_System.Migrations
                     b.HasIndex("PermissionId");
 
                     b.ToTable("role_permissions", (string)null);
+                });
+
+            modelBuilder.Entity("School_Management_System.Models.Course", b =>
+                {
+                    b.HasOne("School_Management_System.Models.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Department");
                 });
 
             modelBuilder.Entity("School_Management_System.Models.Department", b =>
