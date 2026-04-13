@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using School_Management_System.Data;
+using School_Management_System.Models;
 using X.PagedList.Extensions;
 
 namespace School_Management_System.Controllers
@@ -36,5 +37,22 @@ namespace School_Management_System.Controllers
             return View();
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Course course, int DepartmentId)
+        {
+            if(!ModelState.IsValid)
+            {
+                var departments = await _applicationDbContext.Departments.ToListAsync();
+                ViewBag.Departments = departments;
+
+                return View(course);
+            }
+
+            _applicationDbContext.Courses.Add(course);
+            await _applicationDbContext.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
