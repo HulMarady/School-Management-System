@@ -14,7 +14,7 @@ namespace School_Management_System.Controllers
         }
         public ActionResult Index(string? search, int page =1, int pageSize = 10)
         {
-            // var query = _applicationDbContext.Courses.AsQueryable(); 
+            var query = _applicationDbContext.Courses.AsQueryable(); 
             return View();
         }
 
