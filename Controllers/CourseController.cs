@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using School_Management_System.Data;
 using X.PagedList.Extensions;
 
@@ -25,6 +26,14 @@ namespace School_Management_System.Controllers
                               .ToPagedList(page, pageSize);
 
             return View(course);
+        }
+
+        public async Task<IActionResult> Create()
+        {
+            var departments = await _applicationDbContext.Departments.ToListAsync();
+            ViewBag.Departments = departments;
+
+            return View();
         }
 
     }
