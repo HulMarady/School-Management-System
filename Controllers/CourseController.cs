@@ -15,7 +15,16 @@ namespace School_Management_System.Controllers
         public ActionResult Index(string? search, int page =1, int pageSize = 10)
         {
             var query = _applicationDbContext.Courses.AsQueryable(); 
-            return View();
+
+            if(!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(course => course.Name.Contains(search));
+            }
+
+            var course = query.OrderByDescending(course => course.Name)
+                              .ToPagedList(page, pageSize);
+
+            return View(course);
         }
 
     }
