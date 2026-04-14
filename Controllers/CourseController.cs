@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
 using School_Management_System.Data;
 using School_Management_System.Models;
 using X.PagedList.Extensions;
@@ -66,6 +67,28 @@ namespace School_Management_System.Controllers
                 return NotFound();
             
             return View(course);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Course course)
+        {
+            if(id != course.Id)
+                return NotFound();
+
+            var existingCourse = await _applicationDbContext.Courses.FindAsync(id);
+
+            if(existingCourse is null)
+                return NotFound();
+
+            if(!ModelState.IsValid)
+            {
+                return View(course);
+            }
+
+            _applicationDbContext.Entry(existingCourse).CurrentValues.SetValues(course);
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
     }
 }
