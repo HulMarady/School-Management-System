@@ -17,6 +17,8 @@ public class ApplicationDbContext : DbContext
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<RolePermission> RolePermissions { get; set; }
     public DbSet<Course> Courses { get; set; }
+    public DbSet<Student> Students { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -52,5 +54,48 @@ public class ApplicationDbContext : DbContext
             .HasOne(rp => rp.Permission)
             .WithMany(p => p.RolesPermissions)
             .HasForeignKey(rp => rp.PermissionId);
+    }
+
+    public override int SaveChanges()
+    {
+        GenerateStudentId();
+        return base.SaveChanges();
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        GenerateStudentId();
+        return await base.SaveChangesAsync(cancellationToken);
+    }
+
+    private void GenerateStudentId()
+    {
+        var newStudents = ChangeTracker.Entries<Student>()
+            .Where(entry => entry.State == EntityState.Added)
+            .Select(entry => entry.Entity);
+        
+        foreach(var student in newStudents)
+        {
+            if(string.IsNullOrEmpty(student.StudentId))
+            {
+                var year = DateTime.Now.Year;
+
+                var lastStudent = Students
+                    .Where(student => student.StudentId.StartsWith(year.ToString()))
+                    .OrderByDescending(student => student.Id)
+                    .FirstOrDefault();
+
+                int nextNumber = 1;
+
+                if(lastStudent is not null)
+                {
+                    var lastNumber = int.Parse(lastStudent.StudentId.Substring(7));
+                    nextNumber = lastNumber + 1;
+                }
+
+                student.StudentId = $"IDT{year}-{nextNumber.ToString("D5")}";
+            }
+        }
+
     }
 }
