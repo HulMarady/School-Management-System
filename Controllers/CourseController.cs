@@ -117,5 +117,21 @@ namespace School_Management_System.Controllers
 
             return View(course);
         }
+
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            if(id <= 0)
+                return NotFound();
+
+            var course = await _applicationDbContext.Courses.FindAsync(id);
+
+            if(course is null)
+                return NotFound();
+
+            _applicationDbContext.Courses.Remove(course);
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
