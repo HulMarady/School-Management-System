@@ -1,3 +1,4 @@
+using API.PagedList;
 using Microsoft.AspNetCore.Mvc;
 using School_Management_System.Data;
 using X.PagedList.Extensions;
@@ -26,7 +27,10 @@ namespace School_Management_System.Controllers
                 );
             }
 
-            // var students = query.OrderByDescending(student => student.CreatedAt).toPagedList(page, pageSize);
+            var students = query.OrderByDescending(student => student.CreatedAt)
+                                .ToPagedList(page, pageSize);
+
+            return View(students);
         }
 
     }
