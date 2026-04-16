@@ -4,7 +4,7 @@ using School_Management_System.Data;
 using School_Management_System.Authorization;
 using Microsoft.AspNetCore.Authorization;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
