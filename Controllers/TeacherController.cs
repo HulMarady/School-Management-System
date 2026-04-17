@@ -2,6 +2,7 @@ using API.PagedList;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using School_Management_System.Data;
+using School_Management_System.Models;
 using X.PagedList.Extensions;
 
 namespace School_Management_System.Controllers
@@ -39,6 +40,21 @@ namespace School_Management_System.Controllers
         {
             ViewBag.Departments = await _applicationDbContext.Departments.ToListAsync();
             return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(Teacher teacher)
+        {
+            if(ModelState.IsValid)
+            {
+                _applicationDbContext.Teachers.Add(teacher);
+                await _applicationDbContext.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            ViewBag.Departments = await _applicationDbContext.Departments.ToListAsync();
+            return View(teacher);
         }
     }
 }
