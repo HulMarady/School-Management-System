@@ -92,5 +92,25 @@ namespace School_Management_System.Controllers
             ViewBag.Departments = await _applicationDbContext.Departments.ToListAsync();
             return View(teacher);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Teacher teacher)
+        {
+            if(id != teacher.Id)
+                return NotFound();
+
+            var existingTeacher = await _applicationDbContext.Teachers
+                .Include(teacher => teacher .User)
+                .Include(teacher => teacher.Department)
+                .FirstOrDefaultAsync(teacher => teacher.Id == id);
+
+            if(existingTeacher is null)
+                return NotFound();
+
+            _applicationDbContext.Entry(existingTeacher).CurrentValues.SetValues(teacher);
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
