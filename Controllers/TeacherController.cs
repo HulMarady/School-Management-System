@@ -125,5 +125,22 @@ namespace School_Management_System.Controllers
 
             return View(teacher);
         }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            if(id <= 0)
+                return NotFound();
+            
+            var teacher = _applicationDbContext.Teachers.Find(id);
+
+            if(teacher is null)
+                return NotFound();
+
+            _applicationDbContext.Teachers.Remove(teacher);
+            await _applicationDbContext.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
