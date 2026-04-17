@@ -34,5 +34,11 @@ namespace School_Management_System.Controllers
 
             return View();
         }
+        
+        public async Task<IActionResult> Create()
+        {
+            ViewBag.Departments = await _applicationDbContext.Departments.ToListAsync();
+            return View();
+        }
     }
 }
