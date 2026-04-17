@@ -1,3 +1,5 @@
+using System.ComponentModel;
+using System.Security.Principal;
 using API.PagedList;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -54,6 +56,22 @@ namespace School_Management_System.Controllers
             }
 
             ViewBag.Departments = await _applicationDbContext.Departments.ToListAsync();
+            return View(teacher);
+        }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            if(id <= 0)
+                return NotFound(); 
+
+            var teacher = _applicationDbContext.Teachers   
+                .Include(teacher => teacher.User)
+                .Include(teacher => teacher.Department)
+                .FirstOrDefault(teacher => teacher.Id == id);
+
+            if(teacher is null)
+                return NotFound();
+
             return View(teacher);
         }
     }
