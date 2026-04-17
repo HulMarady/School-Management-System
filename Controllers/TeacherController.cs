@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Runtime.InteropServices.Marshalling;
 using System.Security.Principal;
 using API.PagedList;
 using Microsoft.AspNetCore.Mvc;
@@ -72,6 +73,23 @@ namespace School_Management_System.Controllers
             if(teacher is null)
                 return NotFound();
 
+            return View(teacher);
+        }
+
+        public async Task<IActionResult> Edit(int id)
+        {
+            if(id <= 0)
+                return NotFound();
+
+            var teacher = await _applicationDbContext.Teachers
+                .Include(teacher => teacher.User)
+                .Include(teacher => teacher.Department)
+                .FirstOrDefaultAsync(teacher => teacher.Id == id);
+
+            if(teacher is null)
+                return NotFound();
+
+            ViewBag.Departments = await _applicationDbContext.Departments.ToListAsync();
             return View(teacher);
         }
     }
