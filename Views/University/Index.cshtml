@@ -33,40 +33,7 @@
                     <p class="text-2xl font-bold text-gray-800">@Model.TotalItemCount</p>
                 </div>
                 <div class="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-users text-indigo-600"></i>
-                </div>
-            </div>
-        </div>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-gray-500 text-sm">Admins</p>
-                    <p class="text-2xl font-bold text-purple-600">@Model.Count(r => r.Name == "Admin")</p>
-                </div>
-                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-user-shield text-purple-600"></i>
-                </div>
-            </div>
-        </div>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-gray-500 text-sm">Teachers</p>
-                    <p class="text-2xl font-bold text-blue-600">@Model.Count(r => r.Name == "Teacher")</p>
-                </div>
-                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-chalkboard-user text-blue-600"></i>
-                </div>
-            </div>
-        </div>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-gray-500 text-sm">Students</p>
-                    <p class="text-2xl font-bold text-green-600">@Model.Count(r => r.Name == "Student")</p>
-                </div>
-                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-graduation-cap text-green-600"></i>
+                    <i class="fas fa-university text-indigo-600"></i>
                 </div>
             </div>
         </div>
@@ -114,31 +81,53 @@
                                 <span>Name</span>
                             </div>
                         </th>
+
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             <div class="flex items-center gap-2">
-                                <i class="fas fa-calendar-plus"></i>
-                                <span>Created At</span>
+                                <i class="fas fa-email"></i>
+                                <span>Email</span>
                             </div>
                         </th>
+
                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             <div class="flex items-center gap-2">
-                                <i class="fas fa-calendar-edit"></i>
-                                <span>Updated At</span>
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Location</span>
                             </div>
                         </th>
-                        <th scope="col" class="relative px-6 py-3">
-                            <span class="sr-only">Actions</span>
+                        @* 
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-calendar-plus"></i>
+                                    <span>Created At</span>
+                                </div>
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-calendar-edit"></i>
+                                    <span>Updated At</span>
+                                </div>
+                            </th> 
+                        *@
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-tools"></i>
+                                <span>Actions</span>
+                            </div>
                         </th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
+                    @{
+                        int index = (Model.PageNumber - 1) * Model.PageSize + 1;
+                    }
                     @if (Model.Any())
                     {
                         foreach (var university in Model)
                         {
                             <tr class="hover:bg-gray-50 transition-colors duration-150">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    #@university.Id
+                                    @index
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <div class="flex items-center">
@@ -152,19 +141,32 @@
                                         </div>
                                     </div>
                                 </td>
-                                
+
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    <div class="flex items-center gap-1">
+                                        <i class="fas fa-clock text-gray-400 text-xs"></i>
+                                        @university.Email
+                                    </div>
+                                </td>
+
+                                <td class="px-6 py-4 text-sm text-gray-500 max-w-xs">
+                                    <div class="flex items-center gap-1 min-w-0">
+                                        <i class="fas fa-clock text-gray-400 text-xs flex-shrink-0"></i>
+                                        <span class="truncate block">@university.Location</span>
+                                    </div>
+                                </td>
+                                @* <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <div class="flex items-center gap-1">
                                         <i class="fas fa-clock text-gray-400 text-xs"></i>
                                         @university.CreatedAt.ToString("MMM dd, yyyy HH:mm")
                                     </div>
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                @* <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                     <div class="flex items-center gap-1">
                                         <i class="fas fa-clock text-gray-400 text-xs"></i>
                                         @university.UpdatedAt.ToString("MMM dd, yyyy HH:mm")
                                     </div>
-                                </td>
+                                </td> *@
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                     <div class="flex items-center justify-end gap-2">
                                         <a href="@Url.Action("Details", "University", new { id = university.Id })" class="text-indigo-600 hover:text-indigo-900 transition-colors p-1" title="View">
@@ -179,6 +181,8 @@
                                     </div>
                                 </td>
                             </tr>
+
+                            index++;
                         }
                     }
                     else
