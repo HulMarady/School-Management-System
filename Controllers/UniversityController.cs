@@ -88,6 +88,20 @@ namespace School_Management_System.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        public async Task<IActionResult> Details(int id)
+        {
+            if (id <= 0)
+                return NotFound();
+
+            var university = await _applicationDbContext.Universities
+                .FindAsync(id);
+
+            if (university is null)
+                return NotFound();
+
+            return View(university);
+        }
+
         public async Task<IActionResult> Delete(int id)
         {
             if(id <=0)
