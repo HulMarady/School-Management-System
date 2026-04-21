@@ -1,3 +1,5 @@
 /bin
 /obj
 /node_modules
+/School_Management_System.Tests/bin
+/School_Management_System.Tests/obj
