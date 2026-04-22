@@ -1,4 +1,5 @@
 ﻿namespace School_Management_System.Tests;
+using Xunit;
 
 public class UnitTest1
 {
