@@ -3,3 +3,7 @@
 /node_modules
 /School_Management_System.Tests/bin
 /School_Management_System.Tests/obj
+/Schol_Management_System.Core/bin
+/Schol_Management_System.Core/obj
+/Schol_Management_System.Infrastructure/bin
+/Schol_Management_System.Infrastructure/obj
