@@ -1,6 +1,6 @@
 ﻿using School_Management_System.Models;
 
-namespace School_Management_System;
+namespace School_Management_System.Core.Models;
 
 public class RolePermission
 {

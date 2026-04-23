@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace School_Management_System.Models;
+namespace School_Management_System.Core.Models;
 
 public class Permission
 {
