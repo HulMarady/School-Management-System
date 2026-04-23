@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using School_Management_System.Data;
+using School_Management_System.Infrastructure.Data;
 using School_Management_System.Models;
 using X.PagedList.Extensions;
 
