@@ -164,9 +164,13 @@ namespace School_Management_System.Controllers
             _applicationDbContext.Roles.Update(existingRole);
             await _applicationDbContext.SaveChangesAsync();
 
-            if(existingRole.RolesPermissions != null && existingRole.RolesPermissions.Any())
+            var existingRolePermissions = await _applicationDbContext.RolePermissions
+                                                .Where(rp => rp.RoleId == existingRole.Id)
+                                                .ToListAsync();
+
+            if(existingRolePermissions.Any())
             {
-                _applicationDbContext.RolePermissions.RemoveRange(existingRole.RolesPermissions);
+                _applicationDbContext.RolePermissions.RemoveRange(existingRolePermissions);
                 await _applicationDbContext.SaveChangesAsync();
             }
 
@@ -180,10 +184,9 @@ namespace School_Management_System.Controllers
 
                 _applicationDbContext.RolePermissions.AddRange(rolePermissions);
                 await _applicationDbContext.SaveChangesAsync();
-
-                await transaction.CommitAsync();
             }
 
+            await transaction.CommitAsync();
             return RedirectToAction(nameof(Index));
         }
 
