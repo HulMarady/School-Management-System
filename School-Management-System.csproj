@@ -19,4 +19,9 @@
     <PackageReference Include="X.PagedList" Version="10.5.9" />
     <PackageReference Include="xunit" Version="2.9.3" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="School_Management_System.Core\School_Management_System.Core.csproj" />
+    <ProjectReference Include="School_Management_System.Infrastructure\School_Management_System.Infrastructure.csproj" />
+  </ItemGroup>
 </Project>
