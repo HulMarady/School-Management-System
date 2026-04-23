@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using School_Management_System.Infrastructure.Data;
-using School_Management_System.Models;
+using School_Management_System.Core.Models;
 using X.PagedList.Extensions;
 
 namespace School_Management_System.Controllers
