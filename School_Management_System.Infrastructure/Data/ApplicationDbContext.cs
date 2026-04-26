@@ -2,7 +2,6 @@
 using School_Management_System.Core.Models;                                                                                                                          
 
 namespace School_Management_System.Infrastructure.Data;
-
 public class ApplicationDbContext : DbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
